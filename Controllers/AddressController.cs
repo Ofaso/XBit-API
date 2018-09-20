@@ -72,7 +72,7 @@ namespace XBitApi.Controllers
         }
         
         // GET api/address/Guid
-        [Authorize] //with no claims
+        [Authorize(Roles = "CanAdd,CanEdit,CanDelete")]
         [HttpGet("{id}")]
         [Route("api/Address/GetAddress/{id}")]
         public IActionResult GetAddress(Guid id)

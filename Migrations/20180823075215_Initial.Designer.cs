@@ -138,7 +138,6 @@ namespace XBitApi.Migrations
 
                     b.ToTable("Countries");
                 });
-
             modelBuilder.Entity("XBitApi.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -434,7 +433,6 @@ namespace XBitApi.Migrations
                         .HasForeignKey("CoinId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
-
             modelBuilder.Entity("XBitApi.Models.User", b =>
                 {
                     b.HasOne("XBitApi.Models.Address", "Address")
