@@ -85,7 +85,8 @@ namespace XBitApi.Provider.JWT
                               issuer: this.issuer,
                               audience: this.audience,
                               claims: claims,
-                              expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
+                              notBefore: DateTime.Now,
+                              expires: DateTime.Now.AddMinutes(expiryInMinutes),
                               signingCredentials: new SigningCredentials(
                                                         this.securityKey,
                                                         SecurityAlgorithms.HmacSha256));

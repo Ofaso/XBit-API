@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
@@ -18,9 +19,19 @@ namespace XBitApi.Controllers
             this.context = context;
         }
 
+        private Guid? GetCurrentUserId()
+        {
+            var currentUser = User.Claims.FirstOrDefault(p => p.Type.Equals("UserId"));
+            if (currentUser != null)
+            {
+                return new Guid(currentUser.Value);
+            }
+            return null;
+        }
+
         // GET api/manufacturer
         [HttpGet]
-        public IActionResult GetManufacturers(Guid minerTypeId, Guid coinAlgorithmId, Guid miningFarmId, Guid shelfId)
+        public IActionResult GetMiners (Guid minerTypeId, Guid coinAlgorithmId, Guid miningFarmId, Guid shelfId)
         {
             try
             {
@@ -71,12 +82,19 @@ namespace XBitApi.Controllers
         }
 
         // GET api/miner/000-000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadOwnMiner")]
+        [Route("api/Address/Miner/{id}")]
         public IActionResult GetMiner(Guid id)
         {
             try
             {
                 Miner miner = context.Miners.Find(id);
+                if (miner.MiningFarm.AdminCustomerId == GetCurrentUserId())
+                {
+                    ;
+                }
+                
                 if (miner == null)
                     return NotFound();
                 return Ok(miner);

@@ -36,7 +36,7 @@ namespace XBit_Api
                                  ValidateAudience = true,
                                  ValidateLifetime = true,
                                  ValidateIssuerSigningKey = true,
-
+                                 ClockSkew = TimeSpan.Zero,
                                  ValidIssuer = "XBitApi.Security.Bearer",
                                  ValidAudience = "XBitApi.Security.Bearer",
                                  IssuerSigningKey =

@@ -36,7 +36,7 @@ namespace XBit_Api.Controllers
                                            .FirstOrDefault(p => p.Username.Equals(loginModel.UserName));
                 if (userInfo != null)
                 {
-                    Customer customerDetails = context.Customers.FirstOrDefault(p => 
+                    User userDetails = context.Users.FirstOrDefault(p => 
                                                p.UserInformationId.ToString().Equals(userInfo.Id.ToString()) 
                                                && p.Password.Equals(loginModel.Password));
 
@@ -52,7 +52,7 @@ namespace XBit_Api.Controllers
                         }
                     }
 
-                    if (customerDetails != null)
+                    if (userDetails != null)
                     {
                         var token = new JwtTokenBuilder()
                                                 .AddSecurityKey(JwtSecurityKey.Create("XBitApi-secret-key-1234"))
@@ -61,20 +61,20 @@ namespace XBit_Api.Controllers
                                                 .AddAudience("XBitApi.Security.Bearer")
                                                 .AddClaim("UserId", userInfo.Id.ToString())
                                                 .AddClaimRoles(ClaimsList)
-                                                .AddExpiry(5)
+                                                .AddExpiry(30)
                                                 .Build();
                         
                         return Ok(token.Value);
                     }
                     else {
-                        return BadRequest(new { Error = "Invalid Password For User "+loginModel.UserName });
+                        return BadRequest(new { Error = "Invalid Username or password!" });
                     }
                 }
                 else {
-                    return BadRequest(new { Error = "This UserName/Email does not exist in our system."});
+                    return BadRequest(new { Error = "Invalid Username or password!" });
                 }
                 
             }  
         }
     }
-}
+  }

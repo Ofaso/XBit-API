@@ -78,7 +78,7 @@ namespace XBitApi.Controllers
             }
         }
 
-        // POST api/minerAlgorithm
+        [HttpPost]
         public IActionResult PostMinerAlgorithm([FromBody]MinerAlgorithm minerAlgorithm)
         {
             try

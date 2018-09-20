@@ -10,7 +10,7 @@ namespace XBitApi.Models
         public Guid MiningFarmId { get; set; }
         public Guid FarmRightId { get; set; }
 
-        public Customer Customer { get; set; }
+        public User Customer { get; set; }
         public MiningFarm MiningFarm { get; set; }
         public FarmRight FarmRight { get; set; }
     }

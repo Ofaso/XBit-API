@@ -84,7 +84,7 @@ namespace XBitApi.Controllers
         {
             try
             {
-                if (context.FarmRights.Find(farmMember.FarmRightId) == null || context.Customers.Find(farmMember.CustomerId) == null || context.MiningFarms.Find(farmMember.MiningFarmId) == null)
+                if (context.FarmRights.Find(farmMember.FarmRightId) == null || context.Users.Find(farmMember.CustomerId) == null || context.MiningFarms.Find(farmMember.MiningFarmId) == null)
                     return BadRequest();
 
                 context.FarmMembers.Add(farmMember);
@@ -104,7 +104,7 @@ namespace XBitApi.Controllers
         {
             try
             {
-                if (context.FarmRights.Find(farmMember.FarmRightId) == null || context.Customers.Find(farmMember.CustomerId) == null || context.MiningFarms.Find(farmMember.MiningFarmId) == null)
+                if (context.FarmRights.Find(farmMember.FarmRightId) == null || context.Users.Find(farmMember.CustomerId) == null || context.MiningFarms.Find(farmMember.MiningFarmId) == null)
                     return BadRequest();
 
                 if (!context.FarmMembers.Any(fm => fm.Id == farmMember.Id))

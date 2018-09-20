@@ -4,11 +4,13 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")] please make sure to follow the same syntax of using the controller
+    // and methods as in the Address...
     public class CountryController : Controller
     {
         private XBitContext context;
@@ -19,7 +21,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/country
-        [HttpGet]
+        [Authorize] //with no claims
+        [HttpGet("{name}")]
+        [Route("api/Country/GetCountries/{name}")]
         public IActionResult GetCountries(string name)
         {
             try
@@ -114,6 +118,36 @@ namespace XBitApi.Controllers
                     return Ok();
                 }
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [Route("api/Country/MinerCount")]
+        public IActionResult GetMinerCount(Guid id)
+        {
+            try
+            {
+                int count = context.Miners.Where(x => x.Shelf.Location.Address.CountryId == id).Count();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [Route("api/Country/LocationCount")]
+        public IActionResult GetLocationCount(Guid id)
+        {
+            try
+            {
+                int count = context.Locations.Where(x => x.Address.CountryId == id).Count();
+                return Ok(count);
             }
             catch (Exception ex)
             {
