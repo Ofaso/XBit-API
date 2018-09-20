@@ -75,7 +75,7 @@ namespace XBitApi.Controllers
         {
             try
             {
-                if (context.Customers.Find(miningFarm.AdminCustomerId) == null)
+                if (context.Users.Find(miningFarm.AdminCustomerId) == null)
                     return BadRequest();
 
                 context.MiningFarms.Add(miningFarm);
@@ -95,7 +95,7 @@ namespace XBitApi.Controllers
         {
             try
             {
-                if (context.Customers.Find(miningFarm.AdminCustomerId) == null)
+                if (context.Users.Find(miningFarm.AdminCustomerId) == null)
                     return BadRequest();
 
                 if (!context.MiningFarms.Any(mf => mf.Id == miningFarm.Id))

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace XBitApi.Models
 {
-    public class Log
+    public class Claims
     {
-
+        public int Id { get; set; }
+        public string Claim { get; set; }
     }
 }

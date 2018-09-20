@@ -135,7 +135,7 @@ namespace XBitApi.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("XBitApi.Models.Customer", b =>
+            modelBuilder.Entity("XBitApi.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -425,7 +425,7 @@ namespace XBitApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("XBitApi.Models.Customer", b =>
+            modelBuilder.Entity("XBitApi.Models.User", b =>
                 {
                     b.HasOne("XBitApi.Models.Address", "Address")
                         .WithMany()
@@ -440,7 +440,7 @@ namespace XBitApi.Migrations
 
             modelBuilder.Entity("XBitApi.Models.FarmMember", b =>
                 {
-                    b.HasOne("XBitApi.Models.Customer", "Customer")
+                    b.HasOne("XBitApi.Models.User", "User")
                         .WithMany("FarmMembers")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -531,7 +531,7 @@ namespace XBitApi.Migrations
 
             modelBuilder.Entity("XBitApi.Models.MiningFarm", b =>
                 {
-                    b.HasOne("XBitApi.Models.Customer", "Customer")
+                    b.HasOne("XBitApi.Models.User", "User")
                         .WithMany("MiningFarms")
                         .HasForeignKey("CustomerId");
 

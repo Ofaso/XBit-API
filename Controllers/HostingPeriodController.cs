@@ -19,6 +19,7 @@ namespace XBitApi.Controllers
         }
 
         // GET api/hostingperiod
+        [HttpGet]
         public IActionResult GetHostingPeriods(DateTime startDate, DateTime endDate, Guid minerId, double pricePerMonth)
         {
             try

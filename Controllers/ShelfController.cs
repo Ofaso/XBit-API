@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
@@ -124,6 +125,21 @@ namespace XBitApi.Controllers
                 context.Shelves.Remove(shelf);
                 context.SaveChanges();
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [Route("api/Shelf/MinerCount")]
+        public IActionResult GetMinerCount(Guid id)
+        {
+            try
+            {
+                int count = context.Miners.Where(x => x.ShelfId == id).Count();
+                return Ok(count);
             }
             catch (Exception ex)
             {

@@ -4,20 +4,19 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     public class AddressController : Controller
     {
         private XBitContext context;
-        private LoggingService loggingService;
 
         public AddressController(XBitContext context)
         {
             this.context = context;
-            this.loggingService = new LoggingService(context);
         }
 
         // GET api/address?countryId=test
@@ -71,9 +70,11 @@ namespace XBitApi.Controllers
                 return StatusCode(500);
             }
         }
-
+        
         // GET api/address/Guid
+        [Authorize] //with no claims
         [HttpGet("{id}")]
+        [Route("api/Address/GetAddress/{id}")]
         public IActionResult GetAddress(Guid id)
         {
             try
