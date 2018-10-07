@@ -389,7 +389,6 @@ namespace XBitApi.Migrations
 
                     b.ToTable("Shelves");
                 });
-
             modelBuilder.Entity("XBitApi.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -411,7 +410,6 @@ namespace XBitApi.Migrations
 
                     b.ToTable("Users");
                 });
-
             modelBuilder.Entity("XBitApi.Models.UserClaimRoles", b =>
                 {
                     b.Property<int>("Id")
@@ -482,6 +480,19 @@ namespace XBitApi.Migrations
                 });
 
             modelBuilder.Entity("XBitApi.Models.ClaimRoles", b =>
+                {
+                    b.HasOne("XBitApi.Models.Claims", "Claims")
+                        .WithMany()
+                        .HasForeignKey("ClaimsId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("XBitApi.Models.Roles", "Roles")
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("XBitApi.Models.CoinAlgorithm", b =>
                 {
                     b.HasOne("XBitApi.Models.Claims", "Claims")
                         .WithMany()

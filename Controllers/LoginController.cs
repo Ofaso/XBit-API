@@ -26,58 +26,6 @@ namespace XBit_Api.Controllers
         [HttpPost]
         public IActionResult Create([FromBody]LoginModel loginModel)
         {
-            //Miner miner = new Miner()
-            //{
-            //    CoinAlgorithm = new CoinAlgorithm()
-            //    {
-            //        Algorithm = new Algorithm()
-            //        {
-            //            Name = "256"
-            //        },
-            //        Coin = new Coin()
-            //        {
-            //            Name = "Colx",
-            //            PriceUrl = "asdf",
-            //            ShortName = "Colx",
-            //            Website = "asdfMovie"
-            //        }
-            //    },
-            //    MinerType = new MinerType()
-            //    {
-            //        Manufacturer = new Manufacturer()
-            //        {
-            //            Email = "mario.gwerder@gmail.com",
-            //            Name = "asdasd",
-            //            Phone = "0123123",
-            //            Website = "asdf"
-            //        },
-            //        Name = "asdasd",
-            //        Watts = 30
-            //    },
-            //    MiningFarm = new MiningFarm()
-            //    {
-            //        AdminCustomerId = new Guid("78AECE98-747F-4B44-F161-08D60DF5E3CD"),
-            //        Name = "1"
-            //    },
-            //    Shelf = new Shelf()
-            //    {
-            //        Location = new Location()
-            //        {
-            //            Address = new Address()
-            //            {
-            //                Country = new Country()
-            //                {
-            //                    Name = "123"
-            //                },
-            //                Place = "SChwyz",
-            //                Street = "Tschaibrunnen",
-            //                Zip = "adasd"
-            //            }
-            //        }
-            //    }
-            //};
-            //context.Miners.Add(miner);
-            //context.SaveChanges();
             List<string> ClaimsList = new List<string>();
             if (!ModelState.IsValid) {
                 IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
@@ -129,4 +77,4 @@ namespace XBit_Api.Controllers
             }  
         }
     }
-}
+  }
