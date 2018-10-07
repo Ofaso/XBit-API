@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class CoinController : Controller
     {
         private XBitContext context;
@@ -18,7 +18,9 @@ namespace XBitApi.Controllers
             this.context = context;
         }
 
-        // GET api/coin
+        [HttpGet]
+        [Authorize(Roles = "CanReadCoin")]
+        [Route("api/Coin")]
         public IActionResult GetCoins(string name)
         {
             try
@@ -43,7 +45,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/coin/0000-00000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadCoin")]
+        [Route("api/Coin/{id}")]
         public IActionResult GetCoin(Guid id)
         {
             try
@@ -62,6 +66,8 @@ namespace XBitApi.Controllers
 
         // POST api/coin
         [HttpPost]
+        [Authorize(Roles = "CanUpdateCoin")]
+        [Route("api/Coin")]
         public IActionResult PostCoin([FromBody]Coin coin)
         {
             try
@@ -79,6 +85,8 @@ namespace XBitApi.Controllers
 
         // PUT api/coin
         [HttpPut]
+        [Authorize(Roles = "CanUpdateCoin")]
+        [Route("api/Coin")]
         public IActionResult PutCoin([FromBody]Coin coin)
         {
             try
@@ -97,7 +105,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/coin/0000-00000-000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteCoin")]
+        [Route("api/Coin/{id}")]
         public IActionResult DeleteCoin(Guid id)
         {
             try

@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class CoinAlgorithmController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/coinalgorithm
         [HttpGet]
+        [Authorize(Roles = "CanReadCoinAlgorithm")]
+        [Route("api/CoinAlgorithm")]
         public IActionResult GetCoinALgorithms(Guid algorithmId, Guid coinId)
         {
             try
@@ -53,7 +55,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/coinalgorithm/000000000-0000-0000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadCoinAlgorithm")]
+        [Route("api/CoinAlgorithm/{id}")]
         public IActionResult GetConAlgorithm(Guid id)
         {
             try
@@ -71,6 +75,8 @@ namespace XBitApi.Controllers
 
         // POST api/coinalgorithm
         [HttpPost]
+        [Authorize(Roles = "CanUpdateCoinAlgorithm")]
+        [Route("api/CoinAlgorithm")]
         public IActionResult PostCoinALgorithm([FromBody]CoinAlgorithm coinAlgorithm)
         {
             try
@@ -91,6 +97,8 @@ namespace XBitApi.Controllers
 
         // PUT api/coinalgorithm
         [HttpPut]
+        [Authorize(Roles = "CanUpdateCoinAlgorithm")]
+        [Route("api/CoinAlgorithm")]
         public IActionResult PutCoinAlgorithm([FromBody]CoinAlgorithm coinAlgorithm)
         {
             try
@@ -112,7 +120,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/coinalgorithm/0000-0000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteCoinAlgorithm")]
+        [Route("api/CoinAlgorithm/{id}")]
         public  IActionResult DeleteCoinAlgorithm(Guid id)
         {
             try

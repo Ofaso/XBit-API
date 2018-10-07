@@ -21,8 +21,8 @@ namespace XBitApi.Controllers
         }
 
         // GET api/country
-        [Authorize] //with no claims
-        [HttpGet("{name}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadCountry")]
         [Route("api/Country/GetCountries/{name}")]
         public IActionResult GetCountries(string name)
         {
@@ -49,7 +49,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/country/Guid
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadCountry")]
+        [Route("api/Country/{id}")]
         public IActionResult GetCountry(Guid id)
         {
             try
@@ -69,6 +71,8 @@ namespace XBitApi.Controllers
 
         // POST api/country
         [HttpPost]
+        [Authorize(Roles = "CanUpdateCountry")]
+        [Route("api/Country")]
         public IActionResult PostCountry([FromBody]Country country)
         {
             try
@@ -86,6 +90,8 @@ namespace XBitApi.Controllers
 
         // PUT api/country
         [HttpPut]
+        [Authorize(Roles = "CanUpdateCountry")]
+        [Route("api/Country")]
         public IActionResult PutCountry([FromBody]Country country)
         {
             try
@@ -105,7 +111,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/country/id
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteCountry")]
+        [Route("api/Country/{id}")]
         public IActionResult DeleteCountry(Guid id)
         {
             try

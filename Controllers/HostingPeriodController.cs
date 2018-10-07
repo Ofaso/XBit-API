@@ -4,27 +4,51 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class HostingPeriodController : Controller
     {
         private XBitContext context;
+        private RoleHelper roleHelper;
 
         public HostingPeriodController(XBitContext context)
         {
             this.context = context;
+            roleHelper = new RoleHelper(context);
+        }
+
+        private Guid GetCurrentUserId()
+        {
+            var currentUser = User.Claims.FirstOrDefault(p => p.Type.Equals("UserId"));
+            if (currentUser != null)
+            {
+                return new Guid(currentUser.Value);
+            }
+            return new Guid();
         }
 
         // GET api/hostingperiod
         [HttpGet]
+        [Authorize(Roles = "CanReadHostingPeriod")]
+        [Route("api/HostingPeriod")]
         public IActionResult GetHostingPeriods(DateTime startDate, DateTime endDate, Guid minerId, double pricePerMonth)
         {
             try
             {
-                List<HostingPeriod> hostingPeriods = context.HostingPeriods.ToList();
+                var currentUserId = GetCurrentUserId();
+                List<HostingPeriod> hostingPeriods;
+                if (roleHelper.IsUserAdmin(currentUserId))
+                {
+                    hostingPeriods = context.HostingPeriods.ToList();
+                }
+                else
+                {
+                    hostingPeriods = context.HostingPeriods.Include(x => x.Miner.MiningFarm).Where(x => x.Miner.MiningFarm.AdminCustomerId == currentUserId).ToList();
+                }
 
                 if (startDate != null)
                 {
@@ -71,12 +95,24 @@ namespace XBitApi.Controllers
         }
 
         // GET api/hostingperiod/000-0000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadHostingPeriod")]
+        [Route("api/HostingPeriod/{id}")]
         public IActionResult GetHostingPeriod(Guid id)
         {
             try
             {
-                HostingPeriod hostingPeriod = context.HostingPeriods.Find(id);
+                var currentUserId = GetCurrentUserId();
+                HostingPeriod hostingPeriod;
+                if (roleHelper.IsUserAdmin(currentUserId))
+                {
+                    hostingPeriod = context.HostingPeriods.Find(id);
+                }
+                else
+                {
+                    hostingPeriod = context.HostingPeriods.Include(x => x.Miner.MiningFarm).Where(x => x.Miner.MiningFarm.AdminCustomerId == currentUserId && x.Id == id).SingleOrDefault();
+                }
+             
                 if (hostingPeriod == null)
                     return NotFound();
                 return Ok(hostingPeriod);
@@ -89,6 +125,8 @@ namespace XBitApi.Controllers
 
         // POST api/hostingPeriod
         [HttpPost]
+        [Authorize(Roles = "CanUpdateHostingPeriod")]
+        [Route("api/HostingPeriod")]
         public IActionResult PostHostingPeriod([FromBody]HostingPeriod hostingPeriod)
         {
             try
@@ -109,6 +147,8 @@ namespace XBitApi.Controllers
 
         // PUT api/hostingPeriod
         [HttpPut]
+        [Authorize(Roles = "CanUpdateHostingPeriod")]
+        [Route("api/HostingPeriod")]
         public IActionResult PutHostingPeriod([FromBody]HostingPeriod hostingPeriod)
         {
             try
@@ -130,7 +170,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/hostingperiod/0000-0000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteHostingPeriod")]
+        [Route("api/HostingPeriod")]
         public IActionResult DeleteHostingPeriod(Guid id)
         {
             try

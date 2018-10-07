@@ -11,7 +11,7 @@ namespace XBitApi.Models
         public string FarmMail { get; set; }
         public string Password { get; set; }
 
-        public UserInformation UserInformation { get; set; }
-        public Address Address { get; set; }
+        public virtual UserInformation UserInformation { get; set; }
+        public virtual Address Address { get; set; }
     }
 }

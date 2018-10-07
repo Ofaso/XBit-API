@@ -21,6 +21,8 @@ namespace XBitApi.Controllers
 
         // GET api/address?countryId=test
         [HttpGet]
+        [Authorize(Roles = "CanReadAddress")]
+        [Route("api/Address")]
         public IActionResult GetAddresses(string street, string place, string zip, Guid countryId)
         {
             try
@@ -72,9 +74,9 @@ namespace XBitApi.Controllers
         }
         
         // GET api/address/Guid
-        [Authorize] //with no claims
-        [HttpGet("{id}")]
-        [Route("api/Address/GetAddress/{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadAddress")]
+        [Route("api/Address/{id}")]
         public IActionResult GetAddress(Guid id)
         {
             try
@@ -96,6 +98,8 @@ namespace XBitApi.Controllers
 
         // POST api/address
         [HttpPost]
+        [Authorize(Roles = "CanUpdateAddress")]
+        [Route("api/Address")]
         public IActionResult PostAddress([FromBody]Address address)
         {
             try
@@ -117,6 +121,8 @@ namespace XBitApi.Controllers
 
         // PUT api/address
         [HttpPut]
+        [Authorize(Roles = "CanUpdateAddress")]
+        [Route("api/Address")]
         public IActionResult PutAddress([FromBody]Address address)
         {
             try
@@ -138,7 +144,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/address/Guid
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteAddress")]
+        [Route("api/Address/{id}")]
         public IActionResult DeleteAddress(Guid id)
         {
             try

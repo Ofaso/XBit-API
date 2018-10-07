@@ -6,6 +6,8 @@ using XBitApi.Models;
 using XBitApi.EF;
 using XBitApi.Models.ViewModel;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace XBitApi.Controllers
 {
@@ -14,29 +16,43 @@ namespace XBitApi.Controllers
     public class UserController : Controller
     { 
         private XBitContext context;
+        private RoleHelper roleHelper;
 
         public UserController(XBitContext context)
         {
             this.context = context;
+            roleHelper = new RoleHelper(context);
         }
 
-        private Guid? GetCurrentUserId()
+        private Guid GetCurrentUserId()
         {
             var currentUser = User.Claims.FirstOrDefault(p => p.Type.Equals("UserId"));
             if (currentUser != null)
             {
                 return new Guid(currentUser.Value);
             }
-            return null;
+            return new Guid();
         }
 
         // GET api/User
+        [HttpGet]
+        [Authorize(Roles = "CanReadUser")]
+        [Route("api/User")]
         public IActionResult GetUsers(Guid userInformationId, Guid addressId, string farmMail)
         {
             try
             {
+                
                 List<User> Users = context.Users.ToList();
-
+                Guid currentUserId = GetCurrentUserId();
+                if (roleHelper.IsUserAdmin(currentUserId))
+                {
+                    Users = context.Users.ToList();
+                }
+                else
+                {
+                    Users = context.Users.Where(x => x.UserInformationId == currentUserId).ToList();
+                }
                 if (userInformationId != Guid.Empty)
                 {
                     List<User> UsersToRemove = new List<User>(Users.Where(cu => cu.UserInformationId != userInformationId));
@@ -73,17 +89,25 @@ namespace XBitApi.Controllers
         }
 
         // GET api/User/0000-0000-00000000
-        [HttpGet("{id}")]
-        [Route("api/User")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadUser")]
+        [Route("api/User/{id}")]
         public IActionResult GetUser(Guid id)
         {
             try
             {
-                User User = context.Users.Find(id);
-                if (User == null)
+                var currentUserId = GetCurrentUserId();
+                User user = context.Users.Find(id);
+                if (user == null)
                     return NotFound();
-
-                return Ok(User);
+                if (user.UserInformationId == currentUserId || roleHelper.IsUserAdmin(currentUserId))
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return BadRequest("Access denied!");
+                }
             }
             catch (Exception ex)
             {
@@ -93,6 +117,7 @@ namespace XBitApi.Controllers
 
         [HttpPost]
         [Route("api/User/PostUserRolesAssociation")]
+        [Authorize(Roles = "CanUpdateUser")]
         public IActionResult PostUserRolesAssociation([FromBody]UserRolesVM UserRolesVM)
         {
             if (ModelState.IsValid)
@@ -162,6 +187,7 @@ namespace XBitApi.Controllers
 
         // POST api/User
         [HttpPost]
+        [Authorize(Roles = "CanUpdateUser")]
         public IActionResult PostUser([FromBody]User User)
         {
             try
@@ -183,6 +209,7 @@ namespace XBitApi.Controllers
         // POST api/User
         [HttpPost]
         [Route("api/User/CreateUser")]
+        [Authorize(Roles = "CanUpdateUser")]
         public IActionResult CreateUser([FromBody]UserVM UserVM)
         {
             try
@@ -292,6 +319,8 @@ namespace XBitApi.Controllers
 
         // PUT api/User
         [HttpPut]
+        [Route("api/User")]
+        [Authorize(Roles = "CanUpdateUser")]
         public IActionResult PutUser([FromBody]User User)
         {
             try
@@ -313,7 +342,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/User/0000-00000-000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("api/User/{id}")]
+        [Authorize(Roles = "CanDeleteUser")]
         public IActionResult DeleteUser(Guid id)
         {
             try

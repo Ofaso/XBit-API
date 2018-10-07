@@ -9,7 +9,7 @@ namespace XBitApi.Models
         public Guid AlgorithmId { get; set; }
         public Guid CoinId { get; set; }
 
-        public Algorithm Algorithm { get; set; }
-        public Coin Coin { get; set; }
+        public virtual Algorithm Algorithm { get; set; }
+        public virtual Coin Coin { get; set; }
     }
 }
