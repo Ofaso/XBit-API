@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class MinerAlgorithmController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/mineralgorithm
         [HttpGet]
+        [Authorize(Roles = "CanReadMinerAlgorithm")]
+        [Route("api/MinerAlgorithm")]
         public IActionResult GetMinerAlgorithms(Guid minerTypeId, Guid algorithmId, double hashrate)
         {
             try
@@ -62,7 +64,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/mineralgorithm/000-0000-0000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadMinerAlgorithm")]
+        [Route("api/MinerAlgorithm/{id}")]
         public IActionResult GetMinerAlgorithm(Guid id)
         {
             try
@@ -79,6 +83,8 @@ namespace XBitApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "CanUpdateMinerAlgorithm")]
+        [Route("api/MinerAlgorithm")]
         public IActionResult PostMinerAlgorithm([FromBody]MinerAlgorithm minerAlgorithm)
         {
             try
@@ -99,6 +105,8 @@ namespace XBitApi.Controllers
 
         // PUT api/mineralgorithm
         [HttpPut]
+        [Authorize(Roles = "CanUpdateMinerAlgorithm")]
+        [Route("api/MinerAlgorithm")]
         public IActionResult PutMinerAlgorithm([FromBody]MinerAlgorithm minerAlgorithm)
         {
             try
@@ -120,7 +128,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/mineralgorithm/000-0000-00000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteMinerAlgorithm")]
+        [Route("api/MinerAlgorithm/{id}")]
         public IActionResult DeleteMinerAlgorithm(Guid id)
         {
             try

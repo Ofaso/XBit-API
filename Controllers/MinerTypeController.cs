@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class MinerTypeController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/minertype
         [HttpGet]
+        [Authorize(Roles = "CanReadMinerType")]
+        [Route("api/MinerType")]
         public IActionResult GetMinerTypes(string name, Guid manufacturerId)
         {
             try
@@ -53,7 +55,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/minertype/000-0000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadMinerType")]
+        [Route("api/MinerType/{id}")]
         public IActionResult GetMinerTypes(Guid id)
         {
             try
@@ -72,6 +76,8 @@ namespace XBitApi.Controllers
 
         // POST api/minertype
         [HttpPost]
+        [Authorize(Roles = "CanUpdateMinerType")]
+        [Route("api/MinerType")]
         public IActionResult PostMinerType([FromBody]MinerType minerType)
         {
             try
@@ -92,6 +98,8 @@ namespace XBitApi.Controllers
 
         // PUT api/minertype
         [HttpPut]
+        [Authorize(Roles = "CanUpdateMinerType")]
+        [Route("api/MinerType")]
         public IActionResult PutMinerType([FromBody]MinerType minerType)
         {
             try
@@ -113,7 +121,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/minertype/000-0000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteMinerType")]
+        [Route("api/MinerType/{id}")]
         public IActionResult DeleteMinerType(Guid id)
         {
             try

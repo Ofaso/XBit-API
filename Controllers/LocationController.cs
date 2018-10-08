@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class LocationController : Controller
     {
         private XBitContext context;
@@ -21,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/location
         [HttpGet]
+        [Authorize(Roles = "CanReadLocation")]
+        [Route("api/Location")]
         public IActionResult GetLocations(string name, Guid addressId)
         {
             try
@@ -54,7 +55,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/location/0000-00000-0000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadLocation")]
+        [Route("api/Location/{id}")]
         public IActionResult GetLocation(Guid id)
         {
             try
@@ -72,6 +75,8 @@ namespace XBitApi.Controllers
 
         // POST api/location
         [HttpPost]
+        [Authorize(Roles = "CanUpdateLocation")]
+        [Route("api/Location")]
         public IActionResult PostLocation([FromBody]Location location)
         {
             try
@@ -92,6 +97,8 @@ namespace XBitApi.Controllers
 
         // PUT api/location
         [HttpPut]
+        [Authorize(Roles = "CanUpdateLocation")]
+        [Route("api/Location")]
         public IActionResult PutLocation([FromBody]Location location)
         {
             try
@@ -113,7 +120,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/location/0000-00000-000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteLocation")]
+        [Route("api/Location/{id}")]
         public IActionResult DeleteLocation(Guid id)
         {
             try
@@ -130,8 +139,8 @@ namespace XBitApi.Controllers
                 return StatusCode(500);
             }
         }
-
-        [Authorize]
+        
+        [Authorize(Roles = "CanReadLocation")]
         [Route("api/Location/MinerCount")]
         public IActionResult GetMinerCount(Guid id)
         {
@@ -145,8 +154,8 @@ namespace XBitApi.Controllers
                 return StatusCode(500);
             }
         }
-        
-        [Authorize]
+
+        [Authorize(Roles = "CanReadLocation")]
         [Route("api/Location/ShelfCount")]
         public IActionResult GetShelfCount(Guid id)
         {

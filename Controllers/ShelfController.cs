@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class ShelfController : Controller
     {
         private XBitContext context;
@@ -21,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/context
         [HttpGet]
+        [Authorize(Roles = "CanReadShelf")]
+        [Route("api/Shelf")]
         public IActionResult GetShelves(string name, Guid locationId)
         {
             try
@@ -54,7 +55,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/shelf/000-0000-00000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadShelf")]
+        [Route("api/Shelf/{id}")]
         public IActionResult GetShelf(Guid id)
         {
             try
@@ -72,6 +75,8 @@ namespace XBitApi.Controllers
 
         // POST api/shelf
         [HttpPost]
+        [Authorize(Roles = "CanUpdateShelf")]
+        [Route("api/Shelf")]
         public IActionResult PostShelf([FromBody]Shelf shelf)
         {
             try
@@ -92,6 +97,8 @@ namespace XBitApi.Controllers
 
         // PUT api/shelf
         [HttpPut]
+        [Authorize(Roles = "CanUpdateShelf")]
+        [Route("api/Shelf")]
         public IActionResult PutShelf([FromBody]Shelf shelf)
         {
             try
@@ -113,7 +120,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/shelf/000-00000-000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteShelf")]
+        [Route("api/Shelf/{id}")]
         public IActionResult DeleteShelf(Guid id)
         {
             try
@@ -132,7 +141,7 @@ namespace XBitApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "CanReadShelf")]
         [Route("api/Shelf/MinerCount")]
         public IActionResult GetMinerCount(Guid id)
         {
