@@ -11,9 +11,9 @@ namespace XBitApi.Models
         public Guid MiningFarmId { get; set; }
         public Guid ShelfId { get; set; }
 
-        public MinerType MinerType { get; set; }
-        public CoinAlgorithm CoinAlgorithm { get; set; }
-        public MiningFarm MiningFarm { get; set; }
-        public Shelf Shelf { get; set; }
+        public virtual MinerType MinerType { get; set; }
+        public virtual CoinAlgorithm CoinAlgorithm { get; set; }
+        public virtual MiningFarm MiningFarm { get; set; }
+        public virtual Shelf Shelf { get; set; }
     }
 }

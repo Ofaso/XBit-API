@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class FarmRightController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/farmright
         [HttpGet]
+        [Authorize(Roles = "CanReadFarmRight")]
+        [Route("api/FarmRight")]
         public IActionResult GetFarmRights(bool? canSwitchCoins, bool? canBuyMiningPackages, bool? canWithdrawCoins, bool? hasReadRights)
         {
             try
@@ -71,7 +73,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/farmright/000-0000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadFarmRight")]
+        [Route("api/FarmRight/{id}")]
         public IActionResult GetFarmRight(Guid id)
         {
             try
@@ -89,6 +93,8 @@ namespace XBitApi.Controllers
 
         // POST api/farmright
         [HttpPost]
+        [Authorize(Roles = "CanUpdateFarmRight")]
+        [Route("api/FarmRight")]
         public IActionResult PostFarmRight([FromBody]FarmRight farmRight)
         {
             try
@@ -106,6 +112,8 @@ namespace XBitApi.Controllers
 
         // PUT api/farmright
         [HttpPost]
+        [Authorize(Roles = "CanUpdateFarmRight")]
+        [Route("api/FarmRight")]
         public IActionResult PutFarmRight([FromBody]FarmRight farmRight)
         {
             try
@@ -124,7 +132,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/farmright/0000-0000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteFarmRight")]
+        [Route("api/FarmRight/{id}")]
         public IActionResult DeleteFarmRight(Guid id)
         {
             try

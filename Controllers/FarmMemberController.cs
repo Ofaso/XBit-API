@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class FarmMemberController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/farmmember
         [HttpGet]
+        [Authorize(Roles = "CanReadFarmMember")]
+        [Route("api/FarmMember")]
         public IActionResult GetFarmMembers(Guid customerId, Guid miningFarmId, Guid farmRightId)
         {
             try
@@ -62,7 +64,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/farmmember/0000-00000-0000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadFarmMember")]
+        [Route("api/FarmMember/id")]
         public IActionResult GetFarmMember(Guid id)
         {
             try
@@ -80,6 +84,8 @@ namespace XBitApi.Controllers
 
         // POST api/farmmember
         [HttpPost]
+        [Authorize(Roles = "CanUpdateFarmMember")]
+        [Route("api/FarmMember")]
         public IActionResult PostFarmMember([FromBody]FarmMember farmMember)
         {
             try
@@ -100,6 +106,8 @@ namespace XBitApi.Controllers
 
         // PUT api/farmmember
         [HttpPut]
+        [Authorize(Roles = "CanUpdateFarmMember")]
+        [Route("api/FarmMember")]
         public IActionResult PutFarmMember([FromBody]FarmMember farmMember)
         {
             try
@@ -122,6 +130,8 @@ namespace XBitApi.Controllers
 
         // DELETE api/farmmember/000-000-0000000
         [HttpDelete("{id}")]
+        [Authorize(Roles = "CanDeleteFarmMember")]
+        [Route("api/FarmMember/{id}")]
         public IActionResult DeleteFarmMember(Guid id)
         {
             try

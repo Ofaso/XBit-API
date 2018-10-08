@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
@@ -20,6 +21,8 @@ namespace XBitApi.Controllers
 
         // GET api/algorithm
         [HttpGet]
+        [Authorize(Roles = "CanReadAlgorithm")]
+        [Route("api/Algorithm")]
         public IActionResult GetAlgorithms(string name)
         {
             try
@@ -44,7 +47,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/algorithm/0000-00000-0000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadAlgorithm")]
+        [Route("api/Algorithm/{id}")]
         public IActionResult GetAlgorithm(Guid id)
         {
             try
@@ -62,6 +67,8 @@ namespace XBitApi.Controllers
 
         // POST api/algorithm
         [HttpPost]
+        [Authorize(Roles = "CanUpdateAlgorithm")]
+        [Route("api/Algorithm")]
         public IActionResult PostAlgorithm([FromBody]Algorithm algorithm)
         {
             try
@@ -79,6 +86,8 @@ namespace XBitApi.Controllers
 
         // PUT api/algorithm
         [HttpPut]
+        [Authorize(Roles = "CanUpdateAlgorithm")]
+        [Route("api/Algorithm")]
         public IActionResult PutAlgorithm([FromBody]Algorithm algorithm)
         {
             try
@@ -98,7 +107,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/algorithm/00000-00000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteAlgorithm")]
+        [Route("api/Algorithm/{id}")]
         public IActionResult DeleteAlgorithm(Guid id)
         {
             try

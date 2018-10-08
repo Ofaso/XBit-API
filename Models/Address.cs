@@ -11,6 +11,6 @@ namespace XBitApi.Models
         public string Zip { get; set; }
         public Guid CountryId { get; set; }
 
-        public Country Country { get; set; }
+        public virtual Country Country { get; set; }
     }
 }

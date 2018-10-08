@@ -9,6 +9,6 @@ namespace XBitApi.Models
         public string Name { get; set; }
         public Guid AdminCustomerId { get; set; }
 
-        public User Customer { get; set; }
+        public virtual User Customer { get; set; }
     }
 }

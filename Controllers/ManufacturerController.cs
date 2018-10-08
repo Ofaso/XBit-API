@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class ManufacturerController : Controller
     {
         private XBitContext context;
@@ -20,6 +20,8 @@ namespace XBitApi.Controllers
 
         // GET api/manufacturer
         [HttpGet]
+        [Authorize(Roles = "CanReadManufacturer")]
+        [Route("api/Manufacturer")]
         public IActionResult GetManufacturers(string name, string phone, string email, string website)
         {
             try
@@ -71,7 +73,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/manufacturer/000-000-000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadManufacturer")]
+        [Route("api/Manufacturer/{id}")]
         public IActionResult GetManufacturer(Guid id)
         {
             try
@@ -89,6 +93,8 @@ namespace XBitApi.Controllers
 
         // POST api/manufacturer
         [HttpPost]
+        [Authorize(Roles = "CanUpdateManufacturer")]
+        [Route("api/Manufacturer")]
         public IActionResult PostManufacturer([FromBody]Manufacturer manufacturer)
         {
             try
@@ -106,6 +112,8 @@ namespace XBitApi.Controllers
 
         // PUT api/manufacturer
         [HttpPut]
+        [Authorize(Roles = "CanUpdateManufacturer")]
+        [Route("api/Manufacturer")]
         public IActionResult PutManufacturer([FromBody]Manufacturer manufacturer)
         {
             try
@@ -123,7 +131,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/manufacturer/0000-000000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteManufacturer")]
+        [Route("api/Manufacturer/{id}")]
         public IActionResult DeleteManufacturer(Guid id)
         {
             try

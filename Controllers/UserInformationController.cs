@@ -4,27 +4,51 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
+using Microsoft.AspNetCore.Authorization;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class UserInformationController : Controller
     {
         private XBitContext context;
+        private RoleHelper roleHelper;
 
         public UserInformationController(XBitContext context)
         {
             this.context = context;
+            roleHelper = new RoleHelper(context);
+        }
+
+        private Guid GetCurrentUserId()
+        {
+            var currentUser = User.Claims.FirstOrDefault(p => p.Type.Equals("UserId"));
+            if (currentUser != null)
+            {
+                return new Guid(currentUser.Value);
+            }
+            return new Guid();
         }
 
         // GET pai/userinformation
         [HttpGet]
+        [Authorize(Roles = "CanReadUserInformation")]
+        [Route("api/UserInformation")]
         public IActionResult GetUserInformations(string name, string surname, string email, string phone, DateTime birthDate, string username)
         {
             try
             {
-                List<UserInformation> userInformations = context.UserInformations.ToList();
+                var currentUserId = GetCurrentUserId();
+                List<UserInformation> userInformations;
+                if (roleHelper.IsUserAdmin(currentUserId))
+                {
+                    userInformations = context.UserInformations.ToList();
+                }
+                else
+                {
+                    userInformations = context.UserInformations.Where(x => x.Id == currentUserId).ToList();
+                }
+                 
 
                 if (!String.IsNullOrEmpty(name))
                 {
@@ -89,7 +113,9 @@ namespace XBitApi.Controllers
         }
 
         // GET api/userinformation/0000-00000-0000000
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Authorize(Roles = "CanReadUserInformation")]
+        [Route("api/UserInformation/{id}")]
         public IActionResult GetUserInformation(Guid id)
         {
             try
@@ -97,7 +123,11 @@ namespace XBitApi.Controllers
                 UserInformation userInformation = context.UserInformations.Find(id);
                 if (userInformation == null)
                     return NotFound();
-                return Ok(userInformation);
+                if (userInformation.Id == GetCurrentUserId() || roleHelper.IsUserAdmin(GetCurrentUserId()))
+                {
+                    return Ok(userInformation);
+                }
+                return BadRequest("Access denied");
             }
             catch (Exception ex)
             {
@@ -107,6 +137,8 @@ namespace XBitApi.Controllers
 
         // POST api/userinformation
         [HttpPost]
+        [Authorize(Roles = "CanUpdateUserInformation")]
+        [Route("api/UserInformation")]
         public IActionResult PostUserInformation([FromBody]UserInformation userInformation)
         {
             try
@@ -124,6 +156,8 @@ namespace XBitApi.Controllers
 
         // PUT api/userinformation
         [HttpPut]
+        [Authorize(Roles = "CanUpdateUserInformation")]
+        [Route("api/UserInformation")]
         public IActionResult PutUserInformation([FromBody]UserInformation userInformation)
         {
             try
@@ -142,7 +176,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/userinformation/0000-00000-000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteUserInformation")]
+        [Route("api/UserInformation/{id}")]
         public IActionResult DeleteUserInformation(Guid id)
         {
             try

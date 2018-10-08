@@ -5,37 +5,50 @@ using Microsoft.AspNetCore.Mvc;
 using XBitApi.Models;
 using XBitApi.EF;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace XBitApi.Controllers
 {
     [Controller]
-    [Route("api/[controller]")]
     public class MinerController : Controller
     {
         private XBitContext context;
+        private RoleHelper roleHelper;
 
         public MinerController(XBitContext context)
         {
             this.context = context;
+            roleHelper = new RoleHelper(context);
         }
 
-        private Guid? GetCurrentUserId()
+        private Guid GetCurrentUserId()
         {
             var currentUser = User.Claims.FirstOrDefault(p => p.Type.Equals("UserId"));
             if (currentUser != null)
             {
                 return new Guid(currentUser.Value);
             }
-            return null;
+            return new Guid();
         }
 
         // GET api/manufacturer
         [HttpGet]
-        public IActionResult GetMiners (Guid minerTypeId, Guid coinAlgorithmId, Guid miningFarmId, Guid shelfId)
+        [Authorize(Roles = "CanReadMiner")]
+        [Route("api/Miner")]
+        public IActionResult GetMiners(Guid minerTypeId, Guid coinAlgorithmId, Guid miningFarmId, Guid shelfId)
         {
             try
             {
-                List<Miner> miners = context.Miners.ToList();
+                List<Miner> miners;
+                var currentUserId = GetCurrentUserId();
+                if (roleHelper.IsUserAdmin(currentUserId))
+                {
+                    miners = context.Miners.ToList();
+                }
+                else
+                {
+                    miners = context.Miners.Include(x => x.MiningFarm).Where(x => x.MiningFarm.AdminCustomerId == currentUserId).ToList();
+                }
 
                 if (minerTypeId != Guid.Empty)
                 {
@@ -83,16 +96,21 @@ namespace XBitApi.Controllers
 
         // GET api/miner/000-000-000000
         [HttpGet]
-        [Authorize(Roles = "CanReadOwnMiner")]
-        [Route("api/Address/Miner/{id}")]
+        [Authorize(Roles = "CanReadMiner")]
+        [Route("api/Miner/{id}")]
         public IActionResult GetMiner(Guid id)
         {
             try
             {
-                Miner miner = context.Miners.Find(id);
-                if (miner.MiningFarm.AdminCustomerId == GetCurrentUserId())
+                Miner miner;
+                Guid currentUserId = GetCurrentUserId();
+                if (roleHelper.IsUserAdmin(currentUserId))
                 {
-                    ;
+                     miner = context.Miners.Include(x => x.MiningFarm).Where(x => x.Id == id).Single();
+                }
+                else
+                {
+                    miner = context.Miners.Include(x => x.MiningFarm).Where(x => x.Id == id && x.MiningFarm.AdminCustomerId == currentUserId).Single();
                 }
                 
                 if (miner == null)
@@ -107,6 +125,8 @@ namespace XBitApi.Controllers
 
         // POST api/miner
         [HttpPost]
+        [Authorize(Roles = "CanUpdateMiner")]
+        [Route("api/Miner")]
         public IActionResult PostMiner([FromBody]Miner miner)
         {
             try
@@ -127,6 +147,8 @@ namespace XBitApi.Controllers
 
         // PUT api/miner
         [HttpPut]
+        [Authorize(Roles = "CanUpdateMiner")]
+        [Route("api/Miner")]
         public IActionResult PutMiner([FromBody]Miner miner)
         {
             try
@@ -148,7 +170,9 @@ namespace XBitApi.Controllers
         }
 
         // DELETE api/miner/00000-00000-0000000
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Authorize(Roles = "CanDeleteMiner")]
+        [Route("api/Miner/{id}")]
         public IActionResult DeleteMiner(Guid id)
         {
             try
