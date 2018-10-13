@@ -23,7 +23,7 @@ namespace XBitApi.Controllers
         // GET api/country
         [HttpGet]
         [Authorize(Roles = "CanReadCountry")]
-        [Route("api/Country/GetCountries/{name}")]
+        [Route("api/Country/{name}")]
         public IActionResult GetCountries(string name)
         {
             try
