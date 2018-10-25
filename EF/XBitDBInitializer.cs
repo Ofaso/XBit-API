@@ -114,15 +114,6 @@ namespace XBitApi.EF
                 }
                 
             }
-            ////I'm bombing here
-            //XBitContext context = applicationBuilder.ApplicationServices.GetRequiredService<XBitContext>();
-
-            //if (!context.Claims.Any())
-            //{
-            //    // Add range of products
-            //}
-
-            //context.SaveChanges();
         }
     }
 }

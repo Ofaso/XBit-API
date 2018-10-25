@@ -9,10 +9,9 @@ namespace XBitApi.EF
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=RIZWAN-PC\\SQLEXPRESS;Initial Catalog=XBit;Integrated Security=SSPI");
+            optionsBuilder.UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=XBit;Integrated Security=SSPI");
             base.OnConfiguring(optionsBuilder);
         }
-        
 
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<MinerType> MinerTypes { get; set; }
