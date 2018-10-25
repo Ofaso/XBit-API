@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using XBitApi.EF;
 using XBitApi.Models;
 using XBitApi.Provider.JWT;
+using XBitApi.Utilities;
 
 namespace XBit_Api.Controllers
 {
@@ -38,7 +39,7 @@ namespace XBit_Api.Controllers
                 {
                     User userDetails = context.Users.FirstOrDefault(p => 
                                                p.UserInformationId.ToString().Equals(userInfo.Id.ToString()) 
-                                               && p.Password.Equals(loginModel.Password));
+                                               && p.Password.Equals(Hashing.sha256_hash(loginModel.Password)));
 
                     //Get User Claims according to there roles.
                     foreach (var userClaimRole in userInfo.UserClaimsRoles)

@@ -8,6 +8,7 @@ using XBitApi.Models.ViewModel;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using XBitApi.Utilities;
 
 namespace XBitApi.Controllers
 {
@@ -272,7 +273,7 @@ namespace XBitApi.Controllers
                                 AddressId = addressId,
                                 UserInformationId = userInformationId,
                                 FarmMail = UserVM.Email,
-                                Password = UserVM.Password,
+                                Password = Hashing.sha256_hash(UserVM.Password),
                                 Id = Guid.NewGuid()
                             };
 
