@@ -46,7 +46,7 @@ namespace XBit_Api.Controllers
                     {
                         ClaimRoles claimRole = context.ClaimRoles.Include(p => p.Claims)
                                               .Include(q=>q.Roles)
-                                              .FirstOrDefault(p => p.Id == userClaimRole.Id);
+                                              .FirstOrDefault(p => p.Id == userClaimRole.ClaimRolesId);
                         if (claimRole != null)
                         {
                           ClaimsList.Add(claimRole.Claims.Claim);

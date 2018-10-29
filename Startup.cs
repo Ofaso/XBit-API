@@ -83,6 +83,8 @@ namespace XBit_Api
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
+
+            XBitDBInitializer.Seed(app);
         }
     }
 }
