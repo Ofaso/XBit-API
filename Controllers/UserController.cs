@@ -209,7 +209,7 @@ namespace XBitApi.Controllers
         // POST api/User
         [HttpPost]
         [Route("api/User/CreateUser")]
-        //[Authorize(Roles = "CanUpdateUser")]
+        [Authorize(Roles = "CanUpdateUser")]
         public IActionResult CreateUser([FromBody]UserVM UserVM)
         {
             try
