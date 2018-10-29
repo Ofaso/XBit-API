@@ -76,7 +76,7 @@ namespace XBitApi.Controllers
         // GET api/address/Guid
         [Authorize(Roles = "CanReadAddress")]
         [HttpGet("{id}")]
-        [Route("api/Address/GetAddress/{id}")]
+        [Route("api/Address/{id}")]
 
         public IActionResult GetAddress(Guid id)
         {
