@@ -87,3 +87,5 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 }
 ```
 
+### Planned Features
+
