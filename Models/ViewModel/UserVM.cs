@@ -26,5 +26,6 @@ namespace XBitApi.Models.ViewModel
         public UserRolesVM UserClaimsRoles { get; set; }
         [Required]
         public AddressVM Address { get; set; }
+        public string Url { get; set; }
     }
 }

@@ -9,13 +9,14 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using XBitApi.Utilities;
+using System.IO;
 
 namespace XBitApi.Controllers
 {
     [Controller]
     //[Route("api/[controller]")]
     public class UserController : Controller
-    { 
+    {
         private XBitContext context;
         private RoleHelper roleHelper;
 
@@ -43,7 +44,7 @@ namespace XBitApi.Controllers
         {
             try
             {
-                
+
                 List<User> Users = context.Users.ToList();
                 Guid currentUserId = GetCurrentUserId();
                 if (roleHelper.IsUserAdmin(currentUserId))
@@ -149,7 +150,8 @@ namespace XBitApi.Controllers
                             context.SaveChanges();
                             claim.Id = addClaim.Entity.Id;
                         }
-                        else {
+                        else
+                        {
                             claim.Id = claimsVM.Id;
                         }
 
@@ -172,16 +174,18 @@ namespace XBitApi.Controllers
                     foreach (var claimRolesId in ClaimRolesIds)
                     {
                         var UserClaimRoles = context.UserClaimRoles.FirstOrDefault(p => p.ClaimRolesId == claimRolesId && p.UserInformationId == new Guid(UserRolesVM.UserInformationId));
-                        if (UserClaimRoles == null) {
+                        if (UserClaimRoles == null)
+                        {
                             var userClaimRoles = context.UserClaimRoles.Add(new UserClaimRoles() { ClaimRolesId = claimRolesId, UserInformationId = new Guid(UserRolesVM.UserInformationId) });
                             context.SaveChanges();
                         }
                     }
-                    
+
                 }
                 return Ok();
             }
-            else {
+            else
+            {
                 return StatusCode(500);
             }
         }
@@ -218,8 +222,10 @@ namespace XBitApi.Controllers
                 Guid addressId = Guid.Empty;
                 Guid userInformationId = Guid.Empty;
                 Guid UserId = Guid.Empty;
+                string RegistrationToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
                 if (ModelState.IsValid)
                 {
+
                     UserInformation uInformation = context.UserInformations.FirstOrDefault(p => p.Username.Equals(UserVM.Username));
 
                     if (uInformation == null)
@@ -232,7 +238,8 @@ namespace XBitApi.Controllers
                             Phone = UserVM.Phone,
                             Surname = UserVM.Surname,
                             Username = UserVM.Username,
-                            Id = Guid.NewGuid()
+                            Id = Guid.NewGuid(),
+                            RegistrationToken = RegistrationToken
 
                         };
                         var userInformationObject = context.UserInformations.Add(userInformation);
@@ -297,7 +304,8 @@ namespace XBitApi.Controllers
                         return BadRequest(new { Error = "UserName Already Exist!" });
                     }
                 }
-                else {
+                else
+                {
 
                     var errors = new List<string>();
                     foreach (var state in ModelState)
@@ -309,6 +317,17 @@ namespace XBitApi.Controllers
                     }
                     return BadRequest(new { InvalidData = errors });
                 }
+
+                string BodyHTML = "";
+                FileStream fileStream = new FileStream("MailTemplate/EmailConfirmation.html", FileMode.Open); //""//
+                using (StreamReader reader = new StreamReader(fileStream))
+                {
+                    BodyHTML = reader.ReadToEnd();
+                }
+
+                BodyHTML = BodyHTML.Replace("@Name@", UserVM.Name);
+                BodyHTML = BodyHTML.Replace("@callbackurl@", UserVM.Url + "?userName=" + UserVM.Username + "&token=" + RegistrationToken);
+                bool EmailResponse = new EmailHelper().SendMail(UserVM.Email, UserVM.Name, "Registration Confirmation", BodyHTML);
                 return Ok(UserId);
             }
             catch (Exception ex)
@@ -363,5 +382,90 @@ namespace XBitApi.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Route("api/User/VerifyUser")]
+        public IActionResult VerifyUser(string userName, string token)
+        {
+            UserInformation userInfo = context.UserInformations.Include(p => p.UserClaimsRoles)
+                                           .FirstOrDefault(p => p.Username.Equals(userName));
+            if (userInfo != null)
+            {
+                if (!string.IsNullOrWhiteSpace(userInfo.RegistrationToken) && userInfo.RegistrationToken == token)
+                {
+                    userInfo.RegistrationToken = null;
+                    context.SaveChanges();
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(new { Error = "User already verified!" });
+                }
+            }
+            else
+            {
+                return BadRequest(new { Error = "User information not available!" });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("api/User/PasswordResetToken")]
+        public IActionResult PasswordResetToken(string userName, string url)
+        {
+            UserInformation userInfo = context.UserInformations.Include(p => p.UserClaimsRoles)
+                                           .FirstOrDefault(p => p.Username.Equals(userName));
+            if (userInfo != null)
+            {
+                string ResetToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                userInfo.PasswordResetToken = ResetToken;
+                context.SaveChanges();
+
+                string BodyHTML = "";
+                FileStream fileStream = new FileStream("MailTemplate/ResetPassword.html", FileMode.Open); //""//
+                using (StreamReader reader = new StreamReader(fileStream))
+                {
+                    BodyHTML = reader.ReadToEnd();
+                }
+
+                BodyHTML = BodyHTML.Replace("@Name@", userInfo.Name);
+                BodyHTML = BodyHTML.Replace("@callbackurl@", url + "?userName=" + userInfo.Username + "&token=" + userInfo.PasswordResetToken);
+                bool EmailResponse = new EmailHelper().SendMail(userInfo.Email, userInfo.Name, "Reset Password", BodyHTML);
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(new { Error = "User information not available!" });
+            }
+        }
+
+        [HttpGet]
+        [Route("api/User/ResetPassword")]
+        public IActionResult ResetPassword(string userName, string token, string password)
+        {
+            UserInformation userInfo = context.UserInformations.Include(p => p.UserClaimsRoles)
+                                            .FirstOrDefault(p => p.Username.Equals(userName));
+            if (userInfo != null)
+            {
+                if (!string.IsNullOrWhiteSpace(userInfo.PasswordResetToken) && userInfo.PasswordResetToken == token)
+                {
+                    userInfo.PasswordResetToken = null;
+                    User user = context.Users.FirstOrDefault(x => x.UserInformationId == userInfo.Id);
+                    user.Password = Hashing.sha256_hash(password);
+                    context.SaveChanges();
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(new { Error = "Token expired!" });
+                }
+            }
+            else
+            {
+                return BadRequest(new { Error = "User information not available!" });
+            }
+        }
+
     }
 }
